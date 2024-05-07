@@ -1,0 +1,18 @@
+@BaseClass = SvenCoopPower
+[
+	Respawn(choices) : "Respawn" : "Yes" : "" =
+	[
+		"Yes" : "Yes" : ""
+		"No" : "No" : ""
+	]
+]
+
+@PointClass base( SvenCoopPower ) = item_power_levitate : "Power" : "" []
+@PointClass base( SvenCoopPower ) = item_power_invincible : "Power" : "" []
+@PointClass base( SvenCoopPower ) = item_power_ghost : "Power" : "" []
+@PointClass base( SvenCoopPower ) = item_power_amphibian : "Power" : "" []
+@PointClass base( SvenCoopPower ) = item_power_invisibility : "Power" : "" []
+@PointClass base( SvenCoopPower ) = item_power_haste : "Power" : "" []
+@PointClass base( SvenCoopPower ) = item_power_doubledamage : "Power" : "" []
+@PointClass base( SvenCoopPower ) = item_power_ammoregen : "Power" : "" []
+@PointClass base( SvenCoopPower ) = item_power_vitality : "Power" : "" []
