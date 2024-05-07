@@ -41,11 +41,7 @@ namespace SvenCoopPower
 		{
 			if ( szKey == "Respawn" )
 			{
-				if ( szValue == "Yes" )
-					m_bRespawn = true;
-				if ( szValue == "No" )
-					m_bRespawn = false;
-					
+				m_bRespawn = ( szValue == "Yes" || atoi( szValue ) == 1 ? true : false );
 				m_bKeyvalueSet = true;
 			}
 			
