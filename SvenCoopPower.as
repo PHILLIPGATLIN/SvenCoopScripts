@@ -1,13 +1,24 @@
 // designed and written by Phillip aka The White Lion
 // 10 February 2024
 // This script codes for a basic power-up item class, and implements some examples of power-up items as entities
+// How to use them: each power up class is named like item_power_[class name], add an entity to your map with the name of one of the entity class names e.g. "item_power_levitate" and YOU SHOULD set a key value named "Respawn" to either "Yes" or "No" to define respawn behavior
+// this script file features 10 unique power ups and they are all functional
+// you can use some helper functions to spawn random power ups in your map, they are CreateRandomPower() and CreateWeightedRandomCombatPower()
+// also it is ESSENTIAL you include this script code in your map script:
+/*
+void MapInit()
+{	
+	SvenCoopPower::Register();
 
-// ISSUES:
-//			1. a player should be able to equip only one power-up at once
-//			2. set respawn behavior to false by default, if it doesn't respawn the player state won't return to normal! [DONE]
-
-//funcdef HookReturnCode t_pfuncp( CBasePlayer@, CBaseEntity@, int ); // AngelScript says this data type can't be named t_pfuncp or anything else, what the fuck
-//t_pfuncp g_pResurrect;
+	// haste needs this to happen
+	// these are essential for proper behavior, all maps that use SvenCoopPower must have these statements in their MapInit()
+	g_EngineFuncs.CVarSetFloat( "sv_maxspeed", 540 );
+	g_Hooks.RegisterHook( Hooks::Player::ClientPutInServer, @CItemPowerManager_HasteSetBaseSpeed );
+	g_Hooks.RegisterHook( Hooks::Player::PlayerSpawn, @CItemPowerManager_HasteSetBaseSpeed );
+	
+	return;
+}
+*/
 
 namespace SvenCoopPower
 {	
@@ -1125,7 +1136,7 @@ namespace SvenCoopPower
 		}
 	}
 	// #12
-	class CItemPower_Gargantua : CItemPower // changes the player to be like a garg with special abilities
+	class CItemPower_Gargantua : CItemPower // the idea is to make the player very big...not implemented
 	{
 		void Spawn()
 		{
@@ -1268,7 +1279,7 @@ namespace SvenCoopPower
 		g_CustomEntityFuncs.RegisterCustomEntity( "SvenCoopPower::CItemPower_DoubleDamage", "item_power_doubledamage" );
 		g_CustomEntityFuncs.RegisterCustomEntity( "SvenCoopPower::CItemPower_AmmoRegeneration", "item_power_ammoregen" );
 		g_CustomEntityFuncs.RegisterCustomEntity( "SvenCoopPower::CItemPower_Vitality", "item_power_vitality" );
-		//g_CustomEntityFuncs.RegisterCustomEntity( "SvenCoopPower::CItemPower_Resurrection", "item_power_resurrection" );
+		//g_CustomEntityFuncs.RegisterCustomEntity( "SvenCoopPower::CItemPower_Resurrection", "item_power_resurrection" ); // resurrection is unfinished
 		
 		g_Module.ScriptInfo.SetAuthor( "The White Lion" );
 		g_Module.ScriptInfo.SetContactInfo( "Discord: thewhitelion, Steam: https://steamcommunity.com/id/7H3WH143L10N/" );
@@ -1278,29 +1289,6 @@ namespace SvenCoopPower
 
 }
 
-// a note about these functions
-// _Respawn enables the power up entity again, but there is a potential problem if the power up entity is deleted before the effect finishes
-// if the entity is deleted before the duration ends, then the entity won't be able to end the power up effect and return the player to normal
-// this probably won't happen if the entity is set to always respawn, but it could still be deleted by another agent
-// not my fault if that happens, something is fucked
-// what I could do is add redundent routines in both the PowerDOWN and _Respawn functions to restore the player to normal in case the entity is deleted
-// make things right
-//
-// also there is an issue that needs to be resolved, if I use EHandles to keep references to the player who touched the power-up entity and the power-up
-// entity itself, there is no way to handle multiple players touching the same entity with only one EHandle reference to both the power-up and the player.
-// For example, there could be a situation where one player touches a power-up entity, gets the effect, then the _Revoke function is scheduled for that player,
-// but another player touches the same entity and then references to the player are stored in the same EHandle object writing over the reference to the last
-// player who touched the same entity. This is going to cause problems, the class needs to be able to handle multiple players interacting with the items.
-// Solution A: each time a player touches the entity, the entity becomes inert (as in non-interactable) to wait for the last effect to finish, then deletes
-// itself. A function call to create a new entity will be scheduled to create a copy of the entity at the same location at a later time.
-// Solution B: the class will need to keep a record of the players who have touched the entity, and schedule the Revoke function for each player.
-// Solution C: the respawn time and duration are always equal, I could go so far as to block interaction with the entity while the effect is active
-// for a player, and then renable interaction after the power-up effect is finished, basically make it so that only one player can use the power-up at once.
-// What I did: got rid of EHandles, no issues now!
-// 
-// I just realized that I can cast the reference to the player as an EHandle and then pass it to the scheduler for it to be stored later when the time
-// to call the function has come. This shouldn't be a problem in this case since a reference to the player is saved for the scheduler.
-// EHandles are fucky and they don't work, I got rid of them.
 void CItemPowerManager_Respawn( SvenCoopPower::CItemPower@ pPower ) // this function is going to respawn the entity
 {	
 	if ( pPower is null ) return;
