@@ -20,6 +20,12 @@ void MapInit()
 }
 */
 
+void PluginInit()
+{
+	g_Module.ScriptInfo.SetAuthor( "The White Lion" );
+	g_Module.ScriptInfo.SetContactInfo( "Discord: thewhitelion, Steam: https://steamcommunity.com/id/7H3WH143L10N/" );
+}
+
 namespace SvenCoopPower
 {	
 	// the CBasePlayer class has field variables that can be used to implement power-up behavior
@@ -1265,22 +1271,27 @@ namespace SvenCoopPower
 	
 	void Register()
 	{
-		g_CustomEntityFuncs.RegisterCustomEntity( "SvenCoopPower::CItemPower_Levitate", "item_power_levitate" );
-		g_CustomEntityFuncs.RegisterCustomEntity( "SvenCoopPower::CItemPower_HighJump", "item_power_highjump" );
-		g_CustomEntityFuncs.RegisterCustomEntity( "SvenCoopPower::CItemPower_Invincible", "item_power_invincible" );
-		g_CustomEntityFuncs.RegisterCustomEntity( "SvenCoopPower::CItemPower_Ghost", "item_power_ghost" );
-		g_CustomEntityFuncs.RegisterCustomEntity( "SvenCoopPower::CItemPower_Amphibian", "item_power_amphibian" );
-		g_CustomEntityFuncs.RegisterCustomEntity( "SvenCoopPower::CItemPower_Invisibility", "item_power_invisibility" );
-		g_CustomEntityFuncs.RegisterCustomEntity( "SvenCoopPower::CItemPower_Haste", "item_power_haste" );
-		g_CustomEntityFuncs.RegisterCustomEntity( "SvenCoopPower::CItemPower_DoubleDamage", "item_power_doubledamage" );
-		g_CustomEntityFuncs.RegisterCustomEntity( "SvenCoopPower::CItemPower_AmmoRegeneration", "item_power_ammoregen" );
-		g_CustomEntityFuncs.RegisterCustomEntity( "SvenCoopPower::CItemPower_Vitality", "item_power_vitality" );
-		//g_CustomEntityFuncs.RegisterCustomEntity( "SvenCoopPower::CItemPower_Resurrection", "item_power_resurrection" ); // resurrection is unfinished
-		
-		g_Module.ScriptInfo.SetAuthor( "The White Lion" );
-		g_Module.ScriptInfo.SetContactInfo( "Discord: thewhitelion, Steam: https://steamcommunity.com/id/7H3WH143L10N/" );
-		
-		return;
+		dictionary g_EntData;
+		g_EntData[ 'CItemPower_Levitate' ] = 'item_power_levitate';
+		g_EntData[ 'CItemPower_HighJump' ] = 'item_power_highjump';
+		g_EntData[ 'CItemPower_Invincible' ] = 'item_power_invincible';
+		g_EntData[ 'CItemPower_Ghost' ] = 'item_power_ghost';
+		g_EntData[ 'CItemPower_Amphibian' ] = 'item_power_amphibian';
+		g_EntData[ 'CItemPower_Invisibility' ] = 'item_power_invisibility';
+		g_EntData[ 'CItemPower_Haste' ] = 'item_power_haste';
+		g_EntData[ 'CItemPower_DoubleDamage' ] = 'item_power_doubledamage';
+		g_EntData[ 'CItemPower_AmmoRegeneration' ] = 'item_power_ammoregen';
+		g_EntData[ 'CItemPower_Vitality' ] = 'item_power_vitality';
+		// g_EntData[ 'CItemPower_Resurrection' ] = 'item_power_resurrection'; // resurrection is unfinished
+
+		array<string> strClasses = g_EntData.getKeys();
+
+		for( uint ui = 0; ui < strClasses.length(); ui++ )
+		{
+			g_CustomEntityFuncs.RegisterCustomEntity( "SvenCoopPower::" + strClasses[ui], string( g_EntData[ strClasses[ui] ] ) );
+			if( g_CustomEntityFuncs.IsCustomEntity( string( g_EntData[ strClasses[ui] ] ) )
+				g_Game.PrecacheOther( string( g_EntData[ strClasses[ui] ] ) );
+		}
 	}
 
 }
