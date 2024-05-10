@@ -1289,7 +1289,7 @@ namespace SvenCoopPower
 		for( uint ui = 0; ui < strClasses.length(); ui++ )
 		{
 			g_CustomEntityFuncs.RegisterCustomEntity( "SvenCoopPower::" + strClasses[ui], string( g_EntData[ strClasses[ui] ] ) );
-			if( g_CustomEntityFuncs.IsCustomEntity( string( g_EntData[ strClasses[ui] ] ) )
+			if( g_CustomEntityFuncs.IsCustomEntity( string( g_EntData[ strClasses[ui] ] ) ) )
 				g_Game.PrecacheOther( string( g_EntData[ strClasses[ui] ] ) );
 		}
 	}
